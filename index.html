@@ -18,22 +18,23 @@
 <!--     <div ng-controller="MyCtrl1">
          <div class="gridStyle grid1000 mt10" ng-grid="gridOptions"></div>
     </div> -->
-
+    <div ng-controller="AlertsCtrl">
+          <alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
+    </div>
     <div ng-controller="MyCtrl4" class="item clearleft">
 
-        <alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
         <h2>职员信息</h2>
-        <div class="btn-toolbar" ng-controller="ModalCtrl" role="toolbar">
+        <div class="btn-toolbar" role="toolbar">
             <div class="btn-group">
-                <button class="btn btn-default" ng-click="open()">
+                <button class="btn btn-default" ng-click="new()">
                     <span class="glyphicon glyphicon-plus"></span>
-                    新建
+                    新增
                 </button>
-                <button class="btn btn-default">
+                <button class="btn btn-default" ng-click="modify()">
                     <span class="glyphicon glyphicon-pencil"></span>
                     修改
                 </button>
-                <button class="btn btn-default">
+                <button class="btn btn-default" ng-click="deleteSelected()">
                     <span class="glyphicon glyphicon-remove"></span>
                     删除
                 </button>
@@ -71,7 +72,6 @@
         <div class="mt20">
 
             <div class="fl" style="width:30%">
-                <button  class="btn btn-primary" ng-click="deleteSelected()">删除您选择的 {{mySelections.length}} 项</button>
                 <h3>人员总计：{{totalServerItems}}</h3>
                 <h3>当前页人员总计：{{myData.length}}</h3>
                 <h3>工资总计：{{total_salary()}}</h3>

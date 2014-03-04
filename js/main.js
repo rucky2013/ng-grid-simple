@@ -15,64 +15,88 @@ app.service('sharedProperties',function(){
                     { "name": "Jacob", "age": 27, "birthday": "Aug 23, 1983", "salary": 40000},
                     { "name": "Nephi", "age": 29, "birthday": "May 31, 2010", "salary": 50000 },
                     { "name": "Enos", "age": 34, "birthday": "Aug 3, 2008", "salary": 30000 }]; 
+  var alerts = [];
   return {
-    getAllData : function(){
+    getData : function(){
       return allData;
     },
-    setAllData : function(val){
+    setData : function(val){
       allData = val;
+    },
+    getAlerts: function(val){
+      return alerts;
+    },
+    rmAlerts: function(index){
+      index = index || 0 ; 
+      alerts.splice(index, 1);
     }
   }
 })
 
 
-app.controller("MyCtrl4",function($scope, $timeout, sharedProperties){
+app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperties){
  
   $scope.mySelections = [];
   $scope.myData = [];
-  $scope.watchAdd = sharedProperties.getAllData();
-
-  setInterval(function(){$scope.watchAdd = sharedProperties.getAllData()},500);
+  $scope.allData = sharedProperties.getData();
+  $scope.alerts = sharedProperties.getAlerts();
 
   $scope.total_salary = function(){
-    var total_s = 0,data=$scope.myData;
+    var sum = 0,data=$scope.myData;
     for(var i=0;i<data.length;i++){
-      total_s += parseInt(data[i].salary);
+      sum += parseInt(data[i].salary);
     }
-    return total_s
+    return sum
   };
-
-  $scope.deleteSelected = function() {
-    angular.forEach($scope.mySelections, function(rowItem) { 
-        $scope.watchAdd.splice($scope.watchAdd.indexOf(rowItem),1);
-      });
-    // sharedProperties.setAllData($scope.myData);
-    $scope.addAlert({type: 'danger', msg: "成功删除"+$scope.mySelections.length+"项"});
-    $scope.gridOptions.selectAll(false);
-  };
-
-  $scope.clearInput = function(){
-    $scope.name = null;
-    $scope.age = null;
-    $scope.title = null;
-  };
-
-  $scope.save = function(){
-    // $http.post('jsonFiles/register.json', $scope.myData);
-    $scope.addAlert({type: 'success', msg: "保存成功"})
-  };
-
-  $scope.alerts = [];
-
   $scope.addAlert = function(msg) {
     $scope.alerts.push(msg);
     $timeout($scope.closeAlert,2000)
   };
-
   $scope.closeAlert = function(index) {
     index = index || 0 ; 
     $scope.alerts.splice(index, 1);
-  }; 
+  };  
+
+  $scope.deleteSelected = function() {
+    if(!confirm("delete confirm ?")) return;
+    angular.forEach($scope.mySelections, function(rowItem) { 
+        $scope.allData.splice($scope.allData.indexOf(rowItem),1);
+      });
+    $scope.addAlert({type: 'danger', msg: "成功删除"+$scope.mySelections.length+"项"});
+    $scope.gridOptions.selectAll(false);
+  };
+
+  $scope.new = function () {
+    var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: 'ModalInstanceCtrl'
+    });
+
+    modalInstance.result.then(function () {
+      $log.info('Modal ok at: ' + new Date());
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });
+  };
+
+  $scope.modify = function(){
+      var modalInstance = $modal.open({
+      templateUrl: 'myModalContent.html',
+      controller: 'ModalInstanceCtrl',
+      resove: {
+        items: function(){
+          return $scope.mySelections[0];
+        }
+      } 
+    });
+
+    modalInstance.result.then(function () {
+      $log.info('Modal ok at: ' + new Date());
+    }, function () {
+      $log.info('Modal dismissed at: ' + new Date());
+    });  
+  };
+
 // ---------------------------paging----------------------------------------------
     $scope.filterOptions = {
         filterText: "",
@@ -94,7 +118,7 @@ app.controller("MyCtrl4",function($scope, $timeout, sharedProperties){
     };
     $scope.getPagedDataAsync = function (pageSize, page, searchText) {
         setTimeout(function () {
-            var data = sharedProperties.getAllData();
+            var data = sharedProperties.getData();
             if (searchText) {
                 var ft = searchText.toLowerCase();
                 data = data.filter(function(item) {
@@ -122,7 +146,7 @@ app.controller("MyCtrl4",function($scope, $timeout, sharedProperties){
         }
     }, true);
 
-    $scope.$watch('watchAdd', function (newVal, oldVal) {
+    $scope.$watch('allData', function (newVal, oldVal) {
         if (newVal !== oldVal) {
           $scope.getPagedDataAsync($scope.pagingOptions.pageSize, $scope.pagingOptions.currentPage, $scope.filterOptions.filterText);
         }
@@ -149,43 +173,19 @@ app.controller("MyCtrl4",function($scope, $timeout, sharedProperties){
     };
 });
 
-app.controller('ModalCtrl', function($scope,$modal,$log){
-  $scope.Val = "subval";
-  $scope.items = ['item1', 'item2', 'item3'];
+app.controller('AlertsCtrl', function($scope, sharedProperties){
 
-  $scope.open = function () {
-
-    var modalInstance = $modal.open({
-      templateUrl: 'myModalContent.html',
-      controller: 'ModalInstanceCtrl',
-      resolve: {
-        items: function () {
-          return $scope.items;
-        }
-      }
-    });
-
-    modalInstance.result.then(function (selectedItem) {
-      $scope.selected = selectedItem;
-    }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
-    });
-  };
+  $scope.alerts = sharedProperties.getAlerts();
 
 });
 
-app.controller('ModalInstanceCtrl',function($scope, $modalInstance, items, sharedProperties){
-  $scope.items = items;
-    $scope.selected = {
-      item: $scope.items[0]
-    };
-
+app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProperties){
     $scope.ok = function () {
-      var data = sharedProperties.getAllData();
+      var data = sharedProperties.getData();
       data.unshift({name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary});
-      sharedProperties.setAllData(data);
+      sharedProperties.setData(data);
       // $parent.addAlert({type: 'success', msg: "成功添加职员："+$scope.name})
-      $modalInstance.close($scope.selected.item);
+      $modalInstance.close();
     };
 
     $scope.cancel = function () {
