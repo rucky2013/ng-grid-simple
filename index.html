@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="utf-8">
+    <title>Grid App</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/ng-grid.css" />
+    <link rel="stylesheet" type="text/css" href="lib/base.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script src="lib/jquery.min.js"></script>
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/ui-bootstrap-tpls-0.10.0.js"></script>
+    <script type="text/javascript" src="lib/ng-grid.debug.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</head>
+<body>
+
+<!--     <div ng-controller="MyCtrl1">
+         <div class="gridStyle grid1000 mt10" ng-grid="gridOptions"></div>
+    </div> -->
+
+    <div ng-controller="MyCtrl4" class="item clearleft">
+
+        <alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
+        <h2 ng-click="getScope()">职员信息</h2>
+        <div class="btn-toolbar" ng-controller="ModalCtrl" role="toolbar">
+            <div class="btn-group">
+                <button class="btn btn-default" ng-click="open()">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    新建{{Val}}
+                </button>
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    修改{{$parent.Val}}
+                </button>
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    删除
+                </button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-default active">
+                    <span class="glyphicon glyphicon-ok-circle"></span>
+                    启用
+                </button>
+                <button class="btn btn-default" disabled="disabled">
+                    <span class="glyphicon glyphicon-off"></span>
+                    停用
+                </button>
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    同步
+                </button>
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-repeat"></span>
+                    更新
+                </button>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-default">
+                    <span class="glyphicon glyphicon-star"></span>
+                    收藏
+                </button>
+            </div>
+            <div class="btn-group" style="float:right">
+                <button class="btn btn-primary" ng-click="save()">SAVE</button>
+            </div>
+        </div>
+
+        <div class="gridStyle grid1000 mt10" ng-grid="gridOptions"></div>
+        <div class="mt20">
+
+            <div class="fl" style="width:30%">
+                <button  class="btn btn-primary" ng-click="deleteSelected()">删除您选择的 {{mySelections.length}} 项</button>
+                <h3>人员总计：{{gridOptions.totalServerItems.length}}</h3>
+                <h3>当前页人员总计：{{myData.length}}</h3>
+                <h3>工资总计：{{total}}</h3>
+            </div>
+           <!--  <div class="fl">
+               <form class="form-horizontal mt20" name="form" role="form" ng-submit="addPerson()">
+                   <div class="form-group">
+                       <label for="name" class="col-sm-2 control-label">name</label>
+                       <div class="col-sm-10">
+                           <input type="text" class="form-control" name="uName" id="name" placeholder="name" ng-model="name" required></div>
+                   </div>
+                   <div class="form-group">
+                       <label for="age" class="col-sm-2 control-label">age</label>
+                       <div class="col-sm-10">
+                           <input type="number" class="form-control" name="uEmail" id="age" placeholder="33" ng-model="age" required></div>
+                   </div>
+                   <div class="form-group">
+                       <label for="birthday" class="col-sm-2 control-label">birthday</label>
+                       <div class="col-sm-10">
+                           <input type="date" class="form-control" id="birthday" placeholder="33" ng-model="birthday" required></div>
+                   </div>
+                   <div class="form-group">
+                       <label for="salary" class="col-sm-2 control-label">salary</label>
+                       <div class="col-sm-10">
+                           <input type="number" class="form-control" id="salary" placeholder="10000" ng-model="salary" required></div>
+                   </div>
+                   <div class="form-group">
+                       <div class="col-sm-offset-2 col-sm-10">
+                           <button type="submit" class="btn btn-primary">新增</button>
+                           <button type="reset" class="btn btn-default">清除</button>
+                       </div>
+                   </div>
+               </form>
+           </div>
+            -->
+            <div class="fr" style="width:30%">
+                <div class="mt20"><h2>当前选择：</h2>{{mySelections | json}}</div>
+                <div class="mt20"><h2>请求的内容</h2>{{myData | json}}</div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- modal template -->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3>Add a Person</h3>
+    </div>
+    <div class="modal-body">
+                     <form class="form-horizontal mt20" name="form" role="form" ng-submit="addPerson()">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="uName" id="name" placeholder="name" ng-model="name" required></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="age" class="col-sm-2 control-label">age</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="uEmail" id="age" placeholder="33" ng-model="age" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday" class="col-sm-2 control-label">birthday</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="birthday" placeholder="33" ng-model="birthday" ></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salary" class="col-sm-2 control-label">salary</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="salary" placeholder="10000" ng-model="salary" ></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">新增</button>
+                            <button type="reset" class="btn btn-default">清除</button>
+                        </div>
+                    </div>
+                </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+
+</body>
+</html>
