@@ -5,15 +5,11 @@
 
 var app = angular.module('myApp', ['ngGrid','ui.bootstrap']);
 
-/*app.service('topScope',function($http){
-  var allData = ""
-})
-*/
 
 app.controller("MyCtrl4",function($scope, $timeout, $http){
  
   $scope.mySelections = [];
-  $scope.myData = allData = [];
+  $scope.myData = [];
   $scope.total_salary = function(){
     var total_s = 0,data=$scope.myData;
     for(var i=0;i<data.length;i++){
@@ -21,13 +17,14 @@ app.controller("MyCtrl4",function($scope, $timeout, $http){
     }
     return total_s
   };
-
+  
   $scope.deleteSelected = function() {
     angular.forEach($scope.mySelections, function(rowItem) { 
         $scope.myData.splice($scope.myData.indexOf(rowItem),1);
       });
     $scope.addAlert({type: 'danger', msg: "成功删除"+$scope.mySelections.length+"项"});
-    $scope.mySelections = [];
+    // $scope.mySelections = [];
+    $scope.gridOptions.selectAll(false);
   };
 
   $scope.addPerson = function(){
@@ -127,7 +124,7 @@ app.controller("MyCtrl4",function($scope, $timeout, $http){
       pagingOptions: $scope.pagingOptions,
       filterOptions: $scope.filterOptions
     };
-
+/*
     $scope.Val = "topval";
     $scope.ModalCtrl = function($scope,$modal,$log){
 
@@ -169,11 +166,11 @@ app.controller("MyCtrl4",function($scope, $timeout, $http){
         $scope.cancel = function () {
           $modalInstance.dismiss('cancel');
         };
-    }
+    }*/
 
 
 });
-/*
+
 app.controller('ModalCtrl', function($scope,$modal,$log){
   $scope.Val = "subval";
   $scope.items = ['item1', 'item2', 'item3'];
@@ -214,4 +211,4 @@ app.controller('ModalInstanceCtrl',function($scope, $modalInstance, items){
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
     };
-});*/
+});
