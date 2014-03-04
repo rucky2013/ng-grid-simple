@@ -22,16 +22,16 @@
     <div ng-controller="MyCtrl4" class="item clearleft">
 
         <alert ng-repeat="alert in alerts" type="alert.type">{{alert.msg}}</alert>
-        <h2 ng-click="getScope()">职员信息</h2>
+        <h2>职员信息</h2>
         <div class="btn-toolbar" ng-controller="ModalCtrl" role="toolbar">
             <div class="btn-group">
                 <button class="btn btn-default" ng-click="open()">
                     <span class="glyphicon glyphicon-plus"></span>
-                    新建{{Val}}
+                    新建
                 </button>
                 <button class="btn btn-default">
                     <span class="glyphicon glyphicon-pencil"></span>
-                    修改{{$parent.Val}}
+                    修改
                 </button>
                 <button class="btn btn-default">
                     <span class="glyphicon glyphicon-remove"></span>
@@ -72,41 +72,11 @@
 
             <div class="fl" style="width:30%">
                 <button  class="btn btn-primary" ng-click="deleteSelected()">删除您选择的 {{mySelections.length}} 项</button>
-                <h3>人员总计：{{gridOptions.totalServerItems.length}}</h3>
+                <h3>人员总计：{{totalServerItems}}</h3>
                 <h3>当前页人员总计：{{myData.length}}</h3>
-                <h3>工资总计：{{total}}</h3>
+                <h3>工资总计：{{total_salary()}}</h3>
             </div>
-           <!--  <div class="fl">
-               <form class="form-horizontal mt20" name="form" role="form" ng-submit="addPerson()">
-                   <div class="form-group">
-                       <label for="name" class="col-sm-2 control-label">name</label>
-                       <div class="col-sm-10">
-                           <input type="text" class="form-control" name="uName" id="name" placeholder="name" ng-model="name" required></div>
-                   </div>
-                   <div class="form-group">
-                       <label for="age" class="col-sm-2 control-label">age</label>
-                       <div class="col-sm-10">
-                           <input type="number" class="form-control" name="uEmail" id="age" placeholder="33" ng-model="age" required></div>
-                   </div>
-                   <div class="form-group">
-                       <label for="birthday" class="col-sm-2 control-label">birthday</label>
-                       <div class="col-sm-10">
-                           <input type="date" class="form-control" id="birthday" placeholder="33" ng-model="birthday" required></div>
-                   </div>
-                   <div class="form-group">
-                       <label for="salary" class="col-sm-2 control-label">salary</label>
-                       <div class="col-sm-10">
-                           <input type="number" class="form-control" id="salary" placeholder="10000" ng-model="salary" required></div>
-                   </div>
-                   <div class="form-group">
-                       <div class="col-sm-offset-2 col-sm-10">
-                           <button type="submit" class="btn btn-primary">新增</button>
-                           <button type="reset" class="btn btn-default">清除</button>
-                       </div>
-                   </div>
-               </form>
-           </div>
-            -->
+       
             <div class="fr" style="width:30%">
                 <div class="mt20"><h2>当前选择：</h2>{{mySelections | json}}</div>
                 <div class="mt20"><h2>请求的内容</h2>{{myData | json}}</div>
@@ -126,22 +96,22 @@
                     <div class="form-group">
                         <label for="name" class="col-sm-2 control-label">name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" name="uName" id="name" placeholder="name" ng-model="name" required></div>
+                            <input type="text" class="form-control" name="uName" id="name" placeholder="name" ng-model="$parent.name" required></div>
                     </div>
                     <div class="form-group">
                         <label for="age" class="col-sm-2 control-label">age</label>
                         <div class="col-sm-10">
-                            <input type="number" class="form-control" name="uEmail" id="age" placeholder="33" ng-model="age" ></div>
+                            <input type="number" class="form-control" name="uEmail" id="age" placeholder="33" ng-model="$parent.age" ></div>
                     </div>
                     <div class="form-group">
                         <label for="birthday" class="col-sm-2 control-label">birthday</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="birthday" placeholder="33" ng-model="birthday" ></div>
+                            <input type="date" class="form-control" id="birthday" placeholder="33" ng-model="$parent.birthday" ></div>
                     </div>
                     <div class="form-group">
                         <label for="salary" class="col-sm-2 control-label">salary</label>
                         <div class="col-sm-10">
-                            <input type="number" class="form-control" id="salary" placeholder="10000" ng-model="salary" ></div>
+                            <input type="number" class="form-control" id="salary" placeholder="10000" ng-model="$parent.salary" ></div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
