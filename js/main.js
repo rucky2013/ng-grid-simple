@@ -6,15 +6,15 @@
 var app = angular.module('myApp', ['ngGrid','ui.bootstrap']);
 
 app.service('sharedProperties',function(){
-  var allData =    [{"name": "王二", "age": 32, "birthday": "Aug 3, 1978", "salary": 6000},
-                    {"name": "李狗", "age": 25, "birthday": "Aug 3, 1988", "salary": 6000},
-                    { "name": "Moroni", "age": 50, "birthday": "Oct 28, 1970", "salary": 5000},
-                    { "name": "Moris", "age": 43, "birthday": "Oct 28, 1970", "salary": 5000},
-                    { "name": "Nicolas", "age": 42, "birthday": "Oct 28, 1970", "salary": 5000},
-                    { "name": "Tiancum", "age": 43, "birthday": "Feb 12, 1985", "salary": 70000},
-                    { "name": "Jacob", "age": 27, "birthday": "Aug 23, 1983", "salary": 40000},
-                    { "name": "Nephi", "age": 29, "birthday": "May 31, 2010", "salary": 50000 },
-                    { "name": "Enos", "age": 34, "birthday": "Aug 3, 2008", "salary": 30000 }]; 
+  var allData =    [{"name": "王二", "age": 32, "birthday": "Aug 3, 1978", "salary": 6000, "status": false},
+                    {"name": "李狗", "age": 25, "birthday": "Aug 3, 1988", "salary": 6000, "status": true},
+                    { "name": "Moroni", "age": 50, "birthday": "Oct 28, 1970", "salary": 5000, "status": true},
+                    { "name": "Moris", "age": 43, "birthday": "Oct 28, 1970", "salary": 5000, "status": false},
+                    { "name": "Nicolas", "age": 42, "birthday": "Oct 28, 1970", "salary": 5000, "status": true},
+                    { "name": "Tiancum", "age": 43, "birthday": "Feb 12, 1985", "salary": 70000, "status": false},
+                    { "name": "Jacob", "age": 27, "birthday": "Aug 23, 1983", "salary": 40000, "status": true},
+                    { "name": "Nephi", "age": 29, "birthday": "May 31, 2010", "salary": 50000 , "status": false},
+                    { "name": "Enos", "age": 34, "birthday": "Aug 3, 2008", "salary": 30000 , "status": true}]; 
   var alerts = [];
   return {
     getData : function(){
@@ -33,6 +33,12 @@ app.service('sharedProperties',function(){
   }
 })
 
+
+app.controller('AlertsCtrl', function($scope, sharedProperties){
+
+  $scope.alerts = sharedProperties.getAlerts();
+
+});
 
 app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperties){
  
@@ -66,36 +72,6 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
     $scope.gridOptions.selectAll(false);
   };
 
-  $scope.new = function () {
-    var modalInstance = $modal.open({
-      templateUrl: 'myModalContent.html',
-      controller: 'ModalInstanceCtrl'
-    });
-
-    modalInstance.result.then(function () {
-      $log.info('Modal ok at: ' + new Date());
-    }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
-    });
-  };
-
-  $scope.modify = function(){
-      var modalInstance = $modal.open({
-      templateUrl: 'myModalContent.html',
-      controller: 'ModalInstanceCtrl',
-      resove: {
-        items: function(){
-          return $scope.mySelections[0];
-        }
-      } 
-    });
-
-    modalInstance.result.then(function () {
-      $log.info('Modal ok at: ' + new Date());
-    }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
-    });  
-  };
 
 // ---------------------------paging----------------------------------------------
     $scope.filterOptions = {
@@ -164,6 +140,7 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
       showFilter: true,
       showColumnMenu: true,
       columnDefs: [{ field: "name", enableCellEdit: false},
+                      { field: "status", cellTemplate: '<div class="ngCellText" ng-cell-text ng-class="col.colIndex()"><span ng-show="COL_FIELD" class="glyphicon glyphicon-ok"></span></div>'},
                       { field: "age", cellFilter: 'number'},
                       { field: "birthday", cellFilter: 'date'},
                       { field: "salary", cellFilter: 'currency'}],
@@ -171,24 +148,87 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
       pagingOptions: $scope.pagingOptions,
       filterOptions: $scope.filterOptions
     };
+
+  $scope.callModal = function(val){
+     var modalInstance = $modal.open({
+          templateUrl: 'myModalContent.html',
+          controller: 'ModalInstanceCtrl',
+          resolve: {
+            items: function(){
+              return val
+            }
+          } 
+        });
+
+        modalInstance.result.then(function () {
+          $scope.gridOptions.selectAll(false);
+          $log.info('Modal ok at: ' + new Date());
+        }, function () {
+          $log.info('Modal dismissed at: ' + new Date());
+        }); 
+  };
+
+  $scope.modify = function(){
+     $scope.callModal({
+                 type: 2,
+                title: "修改",
+                slinfo: $scope.mySelections[0]     
+     })   
+  };
+
+  $scope.add = function(){
+     $scope.callModal({
+                 type: 1,
+                title: "新增"
+     })       
+  };
+
+  $scope.switchOn = function(){
+      angular.forEach($scope.mySelections, function(rowItem) { 
+        $scope.allData[$scope.allData.indexOf(rowItem)].status = true;
+    });
+      $scope.gridOptions.selectAll(false);
+  };
+
+  $scope.switchOff = function(){
+      angular.forEach($scope.mySelections, function(rowItem) { 
+        $scope.allData[$scope.allData.indexOf(rowItem)].status = false;
+    });
+      $scope.gridOptions.selectAll(false);
+  };
 });
 
-app.controller('AlertsCtrl', function($scope, sharedProperties){
 
-  $scope.alerts = sharedProperties.getAlerts();
-
-});
-
-app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProperties){
-    $scope.ok = function () {
-      var data = sharedProperties.getData();
-      data.unshift({name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary});
-      sharedProperties.setData(data);
-      // $parent.addAlert({type: 'success', msg: "成功添加职员："+$scope.name})
-      $modalInstance.close();
-    };
-
+app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProperties, items){
+    console.log(items.type);
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
     };
+    $scope.ModalTitle = items.title;
+
+    $scope.excAdd = function () {
+      var data = sharedProperties.getData();
+      data.unshift({name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary});
+      $modalInstance.close();
+    };
+
+    $scope.excModify = function () {
+      var data = sharedProperties.getData();
+      var idx = data.indexOf(items.slinfo);
+      data[idx] = {name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary};
+      $modalInstance.close();
+    };
+
+    switch(items.type){
+      case 1:
+        $scope.ok = $scope.excAdd;
+        break;
+      case 2:
+        $scope.name = items.slinfo.name;
+        $scope.age = items.slinfo.age;
+        $scope.birthday = items.slinfo.birthday;
+        $scope.salary = items.slinfo.salary;
+        $scope.ok = $scope.excModify;
+        break;
+    }
 });
