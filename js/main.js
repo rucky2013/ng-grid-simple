@@ -6,15 +6,15 @@
 var app = angular.module('myApp', ['ngGrid','ui.bootstrap']);
 
 app.service('sharedProperties',function(){
-  var allData =    [{"name": "王二", "age": 32, "birthday": "Aug 3, 1978", "salary": 6000, "status": false},
-                    {"name": "李狗", "age": 25, "birthday": "Aug 3, 1988", "salary": 6000, "status": true},
-                    { "name": "Moroni", "age": 50, "birthday": "Oct 28, 1970", "salary": 5000, "status": true},
-                    { "name": "Moris", "age": 43, "birthday": "Oct 28, 1970", "salary": 5000, "status": false},
-                    { "name": "Nicolas", "age": 42, "birthday": "Oct 28, 1970", "salary": 5000, "status": true},
-                    { "name": "Tiancum", "age": 43, "birthday": "Feb 12, 1985", "salary": 70000, "status": false},
-                    { "name": "Jacob", "age": 27, "birthday": "Aug 23, 1983", "salary": 40000, "status": true},
-                    { "name": "Nephi", "age": 29, "birthday": "May 31, 2010", "salary": 50000 , "status": false},
-                    { "name": "Enos", "age": 34, "birthday": "Aug 3, 2008", "salary": 30000 , "status": true}]; 
+  var allData =    [{"name": "王二", "age": 2, "birthday": new Date(), "salary": 6000, "status": false},
+                    {"name": "李狗", "age": 1, "birthday": "1980-05-14", "salary": 6000, "status": true},
+                    { "name": "Moroni", "age": 4, "birthday": "1978-04-12", "salary": 5000, "status": true},
+                    { "name": "Moris", "age": 3, "birthday": "1972-07-30", "salary": 5000, "status": false},
+                    { "name": "Nicolas", "age": 2, "birthday": "1973-04-11", "salary": 5000, "status": true},
+                    { "name": "Tiancum", "age": 3, "birthday": "1988-01-25", "salary": 70000, "status": false},
+                    { "name": "Jacob", "age": 4, "birthday": "1968-09-17", "salary": 40000, "status": true},
+                    { "name": "Nephi", "age": 5, "birthday": "1978-04-10", "salary": 50000 , "status": false},
+                    { "name": "Enos", "age": 2, "birthday": "1974-04-12", "salary": 30000 , "status": true}]; 
   var alerts = [];
   return {
     getData : function(){
@@ -64,7 +64,7 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
   };  
 
   $scope.deleteSelected = function() {
-    if(!confirm("delete confirm ?")) return;
+    // if(!confirm("delete confirm ?")) return;
     angular.forEach($scope.mySelections, function(rowItem) { 
         $scope.allData.splice($scope.allData.indexOf(rowItem),1);
       });
@@ -142,7 +142,7 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
       columnDefs: [{ field: "name", enableCellEdit: false},
                       { field: "status", cellTemplate: '<div class="ngCellText" ng-cell-text ng-class="col.colIndex()"><span ng-show="COL_FIELD" class="glyphicon glyphicon-ok"></span></div>'},
                       { field: "age", cellFilter: 'number'},
-                      { field: "birthday", cellFilter: 'date'},
+                      { field: "birthday", cellFilter: 'date:\'yyyy年MM月dd日\''}, 
                       { field: "salary", cellFilter: 'currency'}],
       totalServerItems: $scope.testGrid,
       pagingOptions: $scope.pagingOptions,
@@ -194,20 +194,21 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
       angular.forEach($scope.mySelections, function(rowItem) { 
         $scope.allData[$scope.allData.indexOf(rowItem)].status = false;
     });
-      $scope.gridOptions.selectAll(false);
+      $scope.gridOptions.selectAll("");
   };
 });
 
 
 app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProperties, items){
-    console.log(items.type);
+    $scope.ModalTitle = items.title;
+
     $scope.cancel = function () {
       $modalInstance.dismiss('cancel');
     };
-    $scope.ModalTitle = items.title;
 
     $scope.excAdd = function () {
       var data = sharedProperties.getData();
+      console.log($scope.birthday);
       data.unshift({name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary});
       $modalInstance.close();
     };
@@ -217,6 +218,12 @@ app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProper
       var idx = data.indexOf(items.slinfo);
       data[idx] = {name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary};
       $modalInstance.close();
+    };
+ 
+    $scope.opencal = function($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
     };
 
     switch(items.type){
@@ -230,5 +237,7 @@ app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProper
         $scope.salary = items.slinfo.salary;
         $scope.ok = $scope.excModify;
         break;
-    }
+    };
+
 });
+
