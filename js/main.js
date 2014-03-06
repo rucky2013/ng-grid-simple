@@ -141,7 +141,7 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
       showColumnMenu: true,
       columnDefs: [{ field: "name", enableCellEdit: false},
                       { field: "status", cellTemplate: '<div class="ngCellText" ng-cell-text ng-class="col.colIndex()"><span ng-show="COL_FIELD" class="glyphicon glyphicon-ok"></span></div>'},
-                      { field: "age", cellFilter: 'number'},
+                      { field: "age", displayName: "level" ,cellFilter: 'number'},
                       { field: "birthday", cellFilter: 'date:\'yyyy年MM月dd日\''}, 
                       { field: "salary", cellFilter: 'currency'}],
       totalServerItems: $scope.testGrid,
@@ -169,11 +169,13 @@ app.controller("MyCtrl4",function($scope, $modal, $log, $timeout, sharedProperti
   };
 
   $scope.modify = function(){
-     $scope.callModal({
-                 type: 2,
+    angular.forEach($scope.mySelections,function(rowItem){
+      $scope.callModal({
+                type: 2,
                 title: "修改",
-                slinfo: $scope.mySelections[0]     
-     })   
+                slinfo: rowItem
+      })
+    })
   };
 
   $scope.add = function(){
@@ -219,7 +221,9 @@ app.controller('ModalInstanceCtrl',function($scope, $modalInstance, sharedProper
       data[idx] = {name: $scope.name, age: $scope.age, birthday: $scope.birthday, salary: $scope.salary};
       $modalInstance.close();
     };
- 
+    
+    $scope.opened = true;
+
     $scope.opencal = function($event) {
       $event.preventDefault();
       $event.stopPropagation();
